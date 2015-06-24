@@ -1,0 +1,18 @@
+PATH
+  remote: .
+  specs:
+    motion-kit (2.0.0)
+      dbt (~> 1.1.5)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    dbt (1.1.5)
+    rake (0.9.6)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  motion-kit!
+  rake
