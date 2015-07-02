@@ -68,32 +68,33 @@ for a full-blown example with comments.
 ```ruby
 class TimerLayout < MK::Layout
   accessor :time
-  view :start_button
-
-  define :inner_margin, 20
+  view :start_button  # will call `mk_layout` if @start_button is not set
 
   def mk_layout
-    add UILabel, :timer_label
+    add UILabel, :timer_label  # also creates @timer_label
     add UIButton, :start_button
 
     mk_constraints do |c|
+      inner_margin = 20
+
       c.mid_x.of(:timer_label).equals(:root)
-      c.bottom.of(:timer_label).equals(:root).minus(:inner_margin)
+      c.bottom.of(:timer_label).equals(:root).minus(inner_margin)
 
       c.mid_x.of(:start_button).equals(:root)
-      c.bottom.of(:start_button).equals(:timer_label).plus(:inner_margin)
+      c.bottom.of(:start_button).equals(:timer_label).plus(inner_margin)
     end
   end
 
   def timer_label_style(lbl)
     lbl.text = '0s'
+    bind(lbl, :text).to(:time) { |val| (val || '0s') }
   end
 
   def start_button_style(btn)
     btn.setTitle('Start', forState: UIControlStateNormal)
   end
 
-  def start_timer
+  def reset_timer
     lbl.text = '0s'
     start_button.setTitle('Stop', forState: UIControlStateNormal)
   end
@@ -122,11 +123,13 @@ def start_button_pressed
 end
 
 
-class TimerController
+class TimerController < UIViewController
 
-  def setup
+  def viewDidLoad
+    super
     @layout = TimerLayout.new
-    @layout.on(:start_button_pressed).call(self)
+    @layout.on(:start_button_pressed, forward_to: self)
+    @layout.on(:start_button_pressed).forward_to(self)
   end
 
   def start_button_pressed
@@ -134,7 +137,7 @@ class TimerController
       stop_button_pressed
       return
     end
-    @layout.start_timer
+    @layout.reset_timer
 
     @start_time = NSDate.new
     @timer = NSTimer.scheduledTimerWithTimeInterval(0.05, target: self, selector: 'tick', userInfo: nil, repeats: true)
