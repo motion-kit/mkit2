@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     motion-kit (2.0.0)
-      dbt (~> 1.1.5)
+      dbt (~> 1.1, >= 1.1.5)
 
 GEM
   remote: https://rubygems.org/
@@ -16,3 +16,6 @@ PLATFORMS
 DEPENDENCIES
   motion-kit!
   rake
+
+BUNDLED WITH
+   1.10.4

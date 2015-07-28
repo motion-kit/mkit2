@@ -22,6 +22,6 @@ DESC
 
   gem.require_paths = ['lib']
 
-  gem.add_dependency 'dbt', '~> 1.1.5'
+  gem.add_runtime_dependency 'dbt', '~> 1.1', '>= 1.1.5'
   gem.add_development_dependency 'rake'
 end
