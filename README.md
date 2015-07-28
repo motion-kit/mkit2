@@ -174,7 +174,7 @@ Running this app will show a label (that says "0s") and a "Start" button.  Tap
 # Styling
 
 - MotionKit Stylesheets (crossplatform)
-- RMQ Stylesheets (iOS only... for now!)
+- RMQ Stylesheets (iOS only)
 
 You can move your `_style` methods out of your `Layout`, into a `Stylesheet`
 if you want.  This will make your Layout even lighter.  Ideally, the `Layout` is
@@ -474,3 +474,13 @@ class InputFieldLayout < MK::Layout
 
 end
 ```
+
+# Lazy Layouts
+
+You might have a layout that is dependent on some initialization.  If that is
+the case, you can place your layout code in the `mk_lazy_layout` method, and
+when you are ready to create your layout, call `build!`.  This method works
+identically to the `mk_layout` method (in fact, *both* methods will be called,
+since the default behavior will always be assumed).
+
+By default, the layout is created during initialization.

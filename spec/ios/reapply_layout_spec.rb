@@ -1,4 +1,4 @@
-class RestyleTestLayout < MK::Layout
+class ReapplyLayoutTest < MK::Layout
   attr :button, :container, :label
 
   def mk_layout
@@ -11,11 +11,9 @@ class RestyleTestLayout < MK::Layout
 
   def button_style(btn)
     btn.tag = 1
-    initial do
-      btn.setTitle('btn', forState: UIControlStateNormal)
-      btn.tag = 2
-    end
-    restyle do
+    btn.setTitle('btn', forState: UIControlStateNormal)
+    btn.tag = 2
+    reapply do
       btn.tag = 3
     end
   end
@@ -27,10 +25,10 @@ class RestyleTestLayout < MK::Layout
 end
 
 
-describe RestyleTestLayout do
+describe ReapplyLayoutTest do
   context('restyling a layout') do
     before do
-      @layout = RestyleTestLayout.new
+      @layout = ReapplyLayoutTest.new
       @button = @layout.button
     end
 
@@ -43,15 +41,15 @@ describe RestyleTestLayout do
       end
     end
 
-    context('restyled button styling') do
+    context('reapplied button styling') do
       it('should set the tag') do
-        @button.reapply!
+        @layout.reapply!
         @button.tag.should == 3
       end
       it('should not set the title') do
         new_title = 'BTN'
         @button.setTitle(new_title, forState: UIControlStateNormal)
-        @button.reapply!
+        @layout.reapply!
         @button.titleForState(UIControlStateNormal).should == new_title
       end
     end

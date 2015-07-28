@@ -1,17 +1,17 @@
 describe 'AutoLayoutAltUsage' do
   before do
-    @view = UIView.new()
+    @view = NSView.new()
     @al = MK::AutoLayoutFactory.new(@view)
   end
 
   context('setting the target view') do
     it('should set the target') do
-      target = UIView.new()
+      target = NSView.new()
       c = @al.set(target).left(:superview)
       c.target.should == target
     end
     it('should revert to the default view') do
-      target = UIView.new()
+      target = NSView.new()
       c1 = @al.set(target).left(:superview)
       c2 = @al.left(:superview)
       c2.target.should == @view

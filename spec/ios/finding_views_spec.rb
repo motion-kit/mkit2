@@ -46,6 +46,16 @@ describe FindingViewsTestLayout do
           it("should find the views") do
             @layout.all(category_name).count.should == view_names.count
           end
+          it("should find the first view") do
+            @layout.first(category_name).should == @layout.send(view_names.first)
+          end
+          it("should find the last view") do
+            @layout.last(category_name).should == @layout.send(view_names.last)
+          end
+          it("should find the nth view") do
+            @layout.nth(category_name, 0).should == @layout.send(view_names[0])
+            @layout.nth(category_name, 1).should == @layout.send(view_names[1])
+          end
           view_names.each do |include_name|
             it("should include #{include_name}") do
               view = @layout.send(include_name)

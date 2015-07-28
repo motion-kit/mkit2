@@ -30,31 +30,6 @@ module MotionKit
       lte: NSLayoutRelationLessThanOrEqual,
       gte: NSLayoutRelationGreaterThanOrEqual,
     }
-    Attributes = {
-      none: NSLayoutAttributeNotAnAttribute,
-      left: NSLayoutAttributeLeft,
-      right: NSLayoutAttributeRight,
-      top: NSLayoutAttributeTop,
-      bottom: NSLayoutAttributeBottom,
-      leading: NSLayoutAttributeLeading,
-      trailing: NSLayoutAttributeTrailing,
-      width: NSLayoutAttributeWidth,
-      height: NSLayoutAttributeHeight,
-      center_x: NSLayoutAttributeCenterX,
-      center_y: NSLayoutAttributeCenterY,
-      baseline: NSLayoutAttributeBaseline,
-
-      last_baseline: NSLayoutAttributeLastBaseline,
-      first_baseline: NSLayoutAttributeFirstBaseline,
-      left_margin: NSLayoutAttributeLeftMargin,
-      right_margin: NSLayoutAttributeRightMargin,
-      top_margin: NSLayoutAttributeTopMargin,
-      bottom_margin: NSLayoutAttributeBottomMargin,
-      leading_margin: NSLayoutAttributeLeadingMargin,
-      trailing_margin: NSLayoutAttributeTrailingMargin,
-      center_x_within_margins: NSLayoutAttributeCenterXWithinMargins,
-      center_y_within_margins: NSLayoutAttributeCenterYWithinMargins,
-    }
 
     def initialize(target, attribute=nil, relationship=:equal, relative_to=nil, attribute2=nil)
       @target = target
@@ -176,11 +151,21 @@ module MotionKit
     alias is_at_least gte
     alias at_least gte
 
-    # width.is('100%').of(:view, :width)
+    # c.width.of(view).equals(:superview)
+    # c.set(view).width.is('100%').of(:view, :width)
     def of(target, attribute2=nil)
-      self.relative_to = target
-      if attribute2
-        self.attribute2 = attribute2
+      if @target
+        self.relative_to = target
+
+        if attribute2
+          self.attribute2 = attribute2
+        end
+      else
+        self.target = target
+
+        if attribute2
+          raise InvalidAttributeError.new("cannot set attribute here")
+        end
       end
       self
     end

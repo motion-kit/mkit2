@@ -22,7 +22,7 @@ module MotionKit
 
     def initWithFrame(frame)
       super
-      mk_layout
+      mk_init
       self
     end
 

@@ -1,22 +1,4 @@
-class CreatingLayoutTest < MK::Layout
-  attr :button, :container, :label
-  attr :container2, :label1, :label2, :label3, :label4
-
-  def mk_layout
-    @button = add NSButton, :button
-    @container = add NSView, :container do |view|
-      @label = add NSTextField, :label
-      add NSControl
-    end
-    @container2 = add NSView, :container2 do |view|
-      @label3 = insert(NSTextField, :label3)
-      @label1 = insert(NSTextField, below: @label3, names: [:label1])
-      @label2 = insert(NSTextField, :label2, index: 1)
-      @label4 = insert(NSTextField, above: @label3) do |lbl|
-        lbl.stringValue = 'lbl4'
-      end
-    end
-  end
+class LayoutWithStylesheet < MK::Stylesheet
 
   def button_style(btn)
     btn.title = 'btn'
@@ -36,15 +18,42 @@ class CreatingLayoutTest < MK::Layout
 
   def label3_style(lbl)
     lbl.stringValue = 'lbl3'
+    reapply do
+      lbl.stringValue = 'LBL3'
+    end
+  end
+
+end
+
+class LayoutWithStylesheetTest < MK::Layout
+  attr :button, :container, :label
+  attr :container2, :label1, :label2, :label3, :label4
+
+  stylesheet LayoutWithStylesheet
+
+  def mk_layout
+    @button = add NSButton, :button
+    @container = add NSView, :container do |view|
+      @label = add NSTextField, :label
+      add NSControl
+    end
+    @container2 = add NSView, :container2 do |view|
+      @label3 = insert(NSTextField, :label3)
+      @label1 = insert(NSTextField, below: @label3, names: [:label1])
+      @label2 = insert(NSTextField, :label2, index: 1)
+      @label4 = insert(NSTextField, above: @label3) do |lbl|
+        lbl.stringValue = 'lbl4'
+      end
+    end
   end
 
 end
 
 
-describe CreatingLayoutTest do
+describe LayoutWithStylesheetTest do
   context('adding views') do
     before do
-      @layout = CreatingLayoutTest.new
+      @layout = LayoutWithStylesheetTest.new
     end
 
     it('should be a NSView') do
@@ -117,6 +126,16 @@ describe CreatingLayoutTest do
       end
       it('should style label4') do
         @layout.label4.stringValue.should == 'lbl4'
+      end
+    end
+
+    context('reapply') do
+      before do
+        @layout.reapply!
+      end
+
+      it('should reapply the stylesheet') do
+        @layout.label3.stringValue.should == 'LBL3'
       end
     end
 

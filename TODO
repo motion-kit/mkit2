@@ -1,0 +1,20 @@
+TODO
+
+- add view
+- insert above/below
+
+- call _style with view
+- support stylesheets
+
+- constraints
+
+o defer
+o initial
+o restyle
+
+o bind
+
+- look up views
+- first, last by name
+- get (aka first)
+- sibling: prev, next

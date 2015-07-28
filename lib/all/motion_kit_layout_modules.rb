@@ -1,10 +1,43 @@
 # @provides MotionKit::LayoutClassMethods
 # @provides MotionKit::LayoutInstanceMethods
+# @requires MotionKit::StylingModule
 module MotionKit
   module LayoutClassMethods
+    def stylesheet(klass_or_instance=nil)
+      if klass_or_instance
+        @stylesheet_class = klass_or_instance
+      else
+        @stylesheet_class
+      end
+    end
+
+    def view(name)
+      raise "not yet implemented"
+    end
+
+    def accessor(name)
+      raise "not yet implemented"
+    end
   end
 
   module LayoutInstanceMethods
+    def self.included(base)
+      base.extend(LayoutClassMethods)
+    end
+    include StylingModule
+
+    def mk_init
+      if self.class.stylesheet
+        @stylesheet = MotionKit.to_instance(self.class.stylesheet)
+      end
+
+      mk_layout
+      call_deferred_blocks
+    end
+
+    def stylesheet
+      @stylesheet
+    end
 
     def mk_layout
     end
@@ -16,16 +49,12 @@ module MotionKit
       if !@built_lazily
         @built_lazily = true
         mk_lazy_layout
+        call_deferred_blocks
       end
     end
 
     def named_views
       @named_views ||= {}
-    end
-
-    def defer(&block)
-      @deferred_blocks ||= []
-      @deferred_blocks << block
     end
 
     # Retrieves a view by its element id.  If there are multiple views with the
@@ -180,21 +209,8 @@ module MotionKit
     def run_in_context(view, &block)
       prev_target = @target
       @target = view
-      block.call(@target)
+      block.call(view)
       @target = prev_target
-    end
-
-    def attempt_to_style(new_view, name)
-      if name
-        add_view_named(new_view, name)
-
-        style_method = "#{name}_style"
-        if respond_to?(style_method)
-          run_in_context(new_view) do
-            self.send(style_method, new_view)
-          end
-        end
-      end
     end
 
   end

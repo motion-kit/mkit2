@@ -19,7 +19,7 @@ describe FindingViewsTestLayout do
     end
 
     context('finding views by unique name') do
-      [:start_button, :stop_button, :name_label, :email_label].each do |include_name|
+      [:start_button, :stop_button, :name_label, :email_label].each do |view_name|
         context(view_name) do
           before do
             @view = @layout.send(view_name)
@@ -45,6 +45,16 @@ describe FindingViewsTestLayout do
         context(category_name) do
           it("should find the views") do
             @layout.all(category_name).count.should == view_names.count
+          end
+          it("should find the first view") do
+            @layout.first(category_name).should == @layout.send(view_names.first)
+          end
+          it("should find the last view") do
+            @layout.last(category_name).should == @layout.send(view_names.last)
+          end
+          it("should find the nth view") do
+            @layout.nth(category_name, 0).should == @layout.send(view_names[0])
+            @layout.nth(category_name, 1).should == @layout.send(view_names[1])
           end
           view_names.each do |include_name|
             it("should include #{include_name}") do
