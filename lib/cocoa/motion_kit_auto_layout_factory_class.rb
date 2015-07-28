@@ -8,6 +8,17 @@ module MotionKit
       @constraints = []
     end
 
+    def apply_all_constraints(layout, target)
+      @constraints.map do |mk_constraint|
+        mk_constraint.resolve_all(layout, target).map do |constraint|
+          if mk_constraint.active
+            mk_constraint.common_ancestor.addConstraint(constraint)
+          end
+          constraint
+        end
+      end.flatten
+    end
+
     def set(view)
       @next_view = view
       self

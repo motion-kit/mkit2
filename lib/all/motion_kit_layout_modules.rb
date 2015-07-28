@@ -11,12 +11,43 @@ module MotionKit
       end
     end
 
+    # This is an `attr_reader`-like method that also calls `build!` if the
+    # @view doesn't exist, and so you can use it to refer to views that are
+    # assigned to ivars in your `layout` method.
+    #
+    # @example
+    #     class MyLayout < MK::Layout
+    #       view :label
+    #       view :login_button
+    #
+    #       def mk_layout
+    #         # if element id and attr name match, no need to assign to ivar
+    #         add UILabel, :label
+    #         # if they don't match you must assign.
+    #         @login_button = add UIButton, :button
+    #       end
+    #
+    #     end
     def view(name)
-      raise "not yet implemented"
+      ivar_name = "@#{name}"
+      define_method(name) do
+        unless instance_variable_get(ivar_name)
+          view = self.get_view(name)
+          unless view
+            build! unless @view
+            view = instance_variable_get(ivar_name) || self.get_view(name)
+          end
+          self.send("#{name}=", view)
+          return view
+        end
+        return instance_variable_get(ivar_name)
+      end
+      # KVO compliance
+      attr_writer name
     end
 
     def accessor(name)
-      raise "not yet implemented"
+      raise "not yet implemented.  but this feature will be very awesome."
     end
   end
 

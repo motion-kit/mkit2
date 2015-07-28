@@ -72,7 +72,7 @@ module MotionKit
       run_in_context(auto_layout_factory, &block)
 
       defer do
-
+        auto_layout_factory.apply_all_constraints(self, add_to_view)
       end
     end
 

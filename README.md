@@ -484,3 +484,8 @@ identically to the `mk_layout` method (in fact, *both* methods will be called,
 since the default behavior will always be assumed).
 
 By default, the layout is created during initialization.
+
+
+# Contributors
+
+See [authors](CONTRIBUTORS.yaml)
