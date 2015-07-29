@@ -26,6 +26,12 @@ module MotionKit
       self
     end
 
+    def initWithCoder(coder)
+      super
+      mk_init
+      self
+    end
+
   end
 
   class TableCellLayout < UITableViewCell
@@ -33,7 +39,13 @@ module MotionKit
 
     def initWithStyle(style, reuseIdentifier: identifier)
       super
-      mk_layout
+      mk_init
+      self
+    end
+
+    def initWithCoder(coder)
+      super
+      mk_init
       self
     end
 
@@ -48,7 +60,13 @@ module MotionKit
 
     def initWithFrame(frame)
       super
-      mk_layout
+      mk_init
+      self
+    end
+
+    def initWithCoder(coder)
+      super
+      mk_init
       self
     end
 

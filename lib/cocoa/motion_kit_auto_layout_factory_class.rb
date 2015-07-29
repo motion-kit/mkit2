@@ -8,9 +8,9 @@ module MotionKit
       @constraints = []
     end
 
-    def apply_all_constraints(layout, target)
+    def apply_all_constraints(layout)
       @constraints.map do |mk_constraint|
-        mk_constraint.resolve_all(layout, target).map do |constraint|
+        mk_constraint.resolve_all(layout).map do |constraint|
           if mk_constraint.active
             mk_constraint.common_ancestor.addConstraint(constraint)
           end
@@ -21,6 +21,7 @@ module MotionKit
 
     def set(view)
       @next_view = view
+      @next_view.setTranslatesAutoresizingMaskIntoConstraints(false)
       self
     end
 

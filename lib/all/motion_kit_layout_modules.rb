@@ -28,22 +28,30 @@ module MotionKit
     #       end
     #
     #     end
-    def view(name)
-      ivar_name = "@#{name}"
-      define_method(name) do
-        unless instance_variable_get(ivar_name)
-          view = self.get_view(name)
-          unless view
-            build! unless @view
-            view = instance_variable_get(ivar_name) || self.get_view(name)
+    # You can also set multiple views in a single line.
+    #
+    # @example
+    #     class MyLayout < MK::Layout
+    #       view :label, :login_button
+    #     end
+    def view(*names)
+      names.each do |name|
+        ivar_name = "@#{name}"
+        define_method(name) do
+          unless instance_variable_get(ivar_name)
+            view = self.get(name)
+            unless view
+              build! unless @view
+              view = instance_variable_get(ivar_name) || self.get(name)
+            end
+            self.send("#{name}=", view)
+            return view
           end
-          self.send("#{name}=", view)
-          return view
+          return instance_variable_get(ivar_name)
         end
-        return instance_variable_get(ivar_name)
+        # KVO compliance
+        attr_writer name
       end
-      # KVO compliance
-      attr_writer name
     end
 
     def accessor(name)
@@ -135,93 +143,6 @@ module MotionKit
     def all_views(name)
       puts "no need to use 'all_views', because Layouts *are* views"
       all(name)
-    end
-
-    # Search for a sibling: the next sibling that has the given id
-    def next(element_id)
-      self.next(element_id, from: target)
-    end
-
-    def next(element_id, from: from_view)
-      search = all(element_id)
-      if search.nil? || search.empty?
-        return nil
-      end
-
-      if from_view.is_a?(String) || from_view.is_a?(Symbol)
-        from_view = self.get(from_view)
-      end
-
-      searching = false
-      found = nil
-      MotionKit.siblings(from_view).each do |sibling|
-        if sibling == from_view
-          searching = true
-        elsif searching && search.include?(sibling)
-          found = sibling
-          break
-        end
-      end
-      return found
-    end
-
-    # Search for a sibling: the previous sibling that has the given id
-    def prev(element_id)
-      prev(element_id, from: target)
-    end
-
-    def prev(element_id, from: from_view)
-      search = all(element_id)
-      if search.nil? || search.empty?
-        return nil
-      end
-
-      if from_view.is_a?(String) || from_view.is_a?(Symbol)
-        from_view = self.get(from_view)
-      end
-
-      found = nil
-      MotionKit.siblings(from_view).each do |sibling|
-        if sibling == from_view
-          break
-        elsif search.include?(sibling)
-          # keep searching; prev should find the *closest* matching view
-          found = sibling
-        end
-      end
-      return found
-    end
-
-    # This searches for the "nearest" view with a given id.  First, all child
-    # views are checked.  Then the search goes up to the parent view, and its
-    # child views are checked.  This means *any* view that is in the parent
-    # view's hierarchy is considered closer than a view in a grandparent's
-    # hierarchy.  This is a "depth-first" search, so any subview that contains
-    # a view with the element id
-    #
-    # A--B--C--D*   Starting at D, E is closer than F, because D&E are siblings.
-    #  \  \  \-E    But F, G and H are closer than A or I, because they share a
-    #   \  \-F--G   closer *parent* (B).  The logic is, "B" is a container, and
-    #    \-I  \-H   all views in that container are in a closer family.
-    def nearest(element_id)
-      nearest(element_id, from: target)
-    end
-
-    def nearest(element_id, from: from_view)
-      search = all(element_id)
-      if search.nil? || search.empty?
-        return nil
-      end
-
-      if from_view.is_a?(NSString)
-        from_view = self.get(from_view)
-      end
-
-      if from_view.is_a?(ConstraintsTarget)
-        from_view = from_view.view
-      end
-
-      MotionKit.nearest(from_view) { |test_view| search.include?(test_view) }
     end
 
     def add_view_named(view, name)

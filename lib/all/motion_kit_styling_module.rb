@@ -8,6 +8,15 @@ module MotionKit
       @deferred_blocks << block
     end
 
+    def call_deferred_blocks(recur=5)
+      if @deferred_blocks
+        blocks = @deferred_blocks
+        @deferred_blocks = nil
+        blocks.each(&:call)
+        call_deferred_blocks(recur - 1) unless recur == 0
+      end
+    end
+
     def reapply(&block)
       @reapply_blocks ||= []
       @reapply_blocks << [block.weak!, target]
@@ -23,15 +32,6 @@ module MotionKit
         @stylesheet.reapply!
       end
       call_deferred_blocks
-    end
-
-    def call_deferred_blocks(recur=5)
-      if @deferred_blocks
-        blocks = @deferred_blocks
-        @deferred_blocks = nil
-        blocks.each(&:call)
-        call_deferred_blocks(recur - 1) unless recur == 0
-      end
     end
 
     def attempt_to_style(new_view, name)

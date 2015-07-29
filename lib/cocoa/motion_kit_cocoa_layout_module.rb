@@ -61,18 +61,18 @@ module MotionKit
       end
     end
 
-    def auto_layout(add_to_view=nil, &block)
-      add_to_view ||= target
-      if add_to_view.is_a?(Symbol)
-        add_to_view = self.get(add_to_view)
+    def auto_layout(auto_layout_target=nil, &block)
+      auto_layout_target ||= target
+      if auto_layout_target.is_a?(Symbol)
+        auto_layout_target = self.get(auto_layout_target)
       end
-      add_to_view.setTranslatesAutoresizingMaskIntoConstraints(false)
+      auto_layout_target.setTranslatesAutoresizingMaskIntoConstraints(false)
 
-      auto_layout_factory = AutoLayoutFactory.new(add_to_view)
+      auto_layout_factory = AutoLayoutFactory.new(auto_layout_target)
       run_in_context(auto_layout_factory, &block)
 
       defer do
-        auto_layout_factory.apply_all_constraints(self, add_to_view)
+        auto_layout_factory.apply_all_constraints(self)
       end
     end
 

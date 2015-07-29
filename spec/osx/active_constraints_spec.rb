@@ -7,11 +7,11 @@ describe 'Constraints - activate/deactivate helpers' do
   end
 
   should 'should activate/deactivate constraints' do
-
-    @layout.context(@view) do
-      @layout.constraints do
-        @constraint = @layout.height(10)
+    @layout.run_in_context(@view) do |view|
+      @layout.auto_layout do |c|
+        @constraint = c.height(10)
       end
+      @layout.call_deferred_blocks
     end
 
     @view.constraints.count.should == 1
